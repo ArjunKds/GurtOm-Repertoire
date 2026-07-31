@@ -54,7 +54,7 @@
             border: 1px solid var(--border-color);
             border-radius: 50px;
             padding: 8px 14px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             user-select: none;
             box-shadow: var(--shadow);
             color: var(--text-color);
@@ -62,13 +62,13 @@
         }
 
         .theme-toggle-btn:hover {
-            transform: scale(1.05);
+            transform: scale(1.08);
         }
 
         .container {
             width: 100%;
             max-width: 650px;
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
         h1 {
@@ -116,6 +116,7 @@
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s ease;
+            font-weight: 600;
         }
 
         .btn-edit:hover {
@@ -299,9 +300,10 @@
 </head>
 <body>
 
-<div class="theme-toggle-btn" onclick="toggleTheme()" id="themeToggleBtn">
-    ☀️
-</div>
+<!-- Theme Toggle Button -->
+<button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" type="button">
+    🌙
+</button>
 
 <div class="container">
     <h1>ГуртОм Репертуар</h1>
@@ -630,21 +632,24 @@
     function toggleTheme() {
         document.body.classList.toggle('dark-mode');
         const isDark = document.body.classList.contains('dark-mode');
-        document.getElementById('themeToggleBtn').textContent = isDark ? '🌙' : '☀️';
-        localStorage.setItem('gurtom_theme', isDark ? 'dark' : 'light');
+        // Якщо зараз темна — показуємо сонце (щоб увімкнути світлу), і навпаки
+        document.getElementById('themeToggleBtn').textContent = isDark ? '☀️' : '🌙';
+        localStorage.setItem('gurtom_theme_mode', isDark ? 'dark' : 'light');
     }
 
     function initTheme() {
-        const savedTheme = localStorage.getItem('gurtom_theme');
+        const savedTheme = localStorage.getItem('gurtom_theme_mode');
         if (savedTheme === 'dark') {
             document.body.classList.add('dark-mode');
+            document.getElementById('themeToggleBtn').textContent = '☀️';
+        } else {
             document.getElementById('themeToggleBtn').textContent = '🌙';
         }
     }
 
-    // Storage Functions
+    // Storage Management (v2)
     function getSongs() {
-        const stored = localStorage.getItem('gurtom_songs');
+        const stored = localStorage.getItem('gurtom_songs_v2');
         if (stored) {
             try { return JSON.parse(stored); } catch(e) {}
         }
@@ -652,10 +657,10 @@
     }
 
     function saveSongs(songs) {
-        localStorage.setItem('gurtom_songs', JSON.stringify(songs));
+        localStorage.setItem('gurtom_songs_v2', JSON.stringify(songs));
     }
 
-    // Render Function
+    // Render Songs
     function renderSongs() {
         const songs = getSongs();
         songs.sort((a, b) => a.title.localeCompare(b.title, 'uk', { sensitivity: 'base' }));
@@ -717,7 +722,7 @@
         item.classList.toggle('active');
     }
 
-    // Modal Add Song
+    // Add Modal
     function openModal() {
         document.getElementById('addModal').classList.add('open');
     }
@@ -752,7 +757,7 @@
         alert('Пісню успішно додано!');
     }
 
-    // Modal Edit Song
+    // Edit Modal
     function openEditModal(title, content) {
         const password = prompt(`Введіть пароль для редагування пісні "${title}":`);
         if (password !== EDIT_DELETE_PASSWORD) {
@@ -806,7 +811,7 @@
         }
     }
 
-    // Init Page
+    // Initialization
     initTheme();
     renderSongs();
 </script>
