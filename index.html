@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>ГуртОм Репертуар</title>
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --accent-color: #3498db;
+            --accent-hover: #2980b9;
+            --danger-color: #e53e3e;
+            --danger-hover: #c53030;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a202c;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            letter-spacing: -0.025em;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-danger {
+            background-color: transparent;
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            margin-top: 16px;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #4a5568;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 120px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-secondary {
+            background-color: #cbd5e0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background-color: #a0aec0;
+        }
+
+        /* Songs list */
+        .song-item {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
+        }
+
+        .song-title {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: left;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            outline: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .song-title:hover {
+            background-color: #f8fafc;
+            color: var(--accent-color);
+        }
+
+        .arrow {
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+            color: #a0aec0;
+        }
+
+        .song-item.active .arrow {
+            transform: rotate(180deg);
+            color: var(--accent-color);
+        }
+
+        .song-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+            background-color: #fafbfc;
+            border-top: 0px solid var(--border-color);
+            padding: 0 20px;
+        }
+
+        .song-item.active .song-content {
+            padding: 16px 20px 20px 20px;
+            border-top-width: 1px;
+            max-height: 1500px;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0;
+            color: #4a5568;
+        }
+
+        .song-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ГуртОм Репертуар</h1>
+
+    <div class="actions">
+        <button class="btn" onclick="openModal()">+ Додати пісню</button>
+    </div>
+
+    <div id="songsList"></div>
+</div>
+
+<!-- Modal Dialog -->
+<div class="modal" id="addModal">
+    <div class="modal-content">
+        <div class="modal-header">Додати нову пісню</div>
+        <div class="form-group">
+            <label for="songTitleInput">Назва пісні</label>
+            <input type="text" id="songTitleInput" placeholder="Наприклад: Червона рута">
+        </div>
+        <div class="form-group">
+            <label for="songTextInput">Текст пісні</label>
+            <textarea id="songTextInput" placeholder="Введіть текст пісні..."></textarea>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn btn-secondary" onclick="closeModal()">Скасувати</button>
+            <button class="btn" onclick="addNewSong()">Зберегти</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ADD_PASSWORD = "Nitai";
+    const DELETE_PASSWORD = "ArjunaK";
+
+    const initialSongs = [
+        {
+            title: "А вже 5 тисяч років",
+            content: `А вже 5 тисяч років,
+Як лунає пісня...
+З хати до окопів.
+В кожнім краї, в кожнім місті
+Егей лунає у серцях:
+Чом то мою душу огортає страх?
+Чим то мою душу огортає страх?
+
+* * *
+
+Чом біда приходить
+До моєї хати?
+Невже вимагає
+Життя долю обирати?
+Егей обирати кожну мить:
+Чи я мушу вбитим бути чи убить?
+Чи я маю помирати чи то жить?
+
+* * *
+
+Як будеш готовий
+Свою совість чути,
+Так зможеш в одну мить
+Мир лукавий осягнути.
+Егей лукавий ти мире:
+Той, хто в світі народився, той умре.
+Хто у світі народився, той помре.
+
+* * *
+
+А померши, мусиш
+Народиться знову.
+– Так в кайданах душі
+Крутяться вовік по колу.
+Та і той кайдани розірве,
+Хто любов у серці своїм підійме,
+Хто любов до Бога в серці підійме.`
+        },
+        {
+            title: "Бхаджаху ре Мана",
+            content: `бхаджаху̐ ре мана ш́рӣ-нанда-нандана
+абхайа-чаран̣а̄равинда ре
+дӯрлабха ма̄нава джанама сат-сан̇ге
+тарохо э бхава-синдху ре
+
+2
+
+ш́ӣта а̄тапа ба̄та бариш̣ана
+э дина джа̄минӣ джа̄ги ре
+бипхале севину кр̣пан̣а дураджана
+чапала сукха-лаба ла̄ги’ ре
+
+3
+
+э дхана, джаувана, путра, париджана
+итхе ки а̄чхе паратӣти ре
+камала-дала-джала, джӣвана т̣аламала
+бхаджаху̐ хари-пада нити ре
+
+4
+
+ш́раван̣а, кӣрттана, смаран̣а, вандана,
+па̄да-севана, да̄сйа ре
+пӯджана, сакхӣ-джана, а̄тма-ниведана
+говинда-да̄са-абхила̄ш̣а ре`
+        },
+        {
+            title: "Гей була в мене коняка",
+            content: `Гей була в мене коняка
+Та й коняка розбишака
+Була шабля ще й рушниця |
+Ще й дівчина чарівниця |
+
+Ту коняку турки вбили
+Ляхи шаблю пощербили
+І рушниця поламалась |
+І дівчина відцуралась | (2)
+
+За буджацькими степами
+Їдуть наші з бунчуками
+А я з плугом і з косою |
+Понад нивою сухою | (2)
+
+Гей гей-гей мій чорний воле
+Степ широкий стерня коле
+Вітер віє повіває |
+Казаночок закипає | (2)
+
+Гей хто в полі озовися
+Гей хто в лісі одкликнися
+Йдіть до мене вечеряти |
+Серце моє звеселяти | (2)
+
+Зук луна, за лугом гине
+Казаночок стигне стигне
+Вітер віє повіває |
+Казаночок застигає`
+        },
+        {
+            title: "Джашомати нандана",
+            content: `джаш́оматӣ-нандана браджа-баро на̄гара
+гокула-ран̃джана ка̄на
+гопӣ-пара̄н̣а-дхана мадана манохара
+ка̄лӣйа-дамана-видха̄на
+
+2
+
+амала харина̄м амийа-вила̄са̄
+випина-пурандара навӣна на̄гара-бара
+бам̇ш́ӣ-бадана сува̄са̄
+
+3
+
+браджа-джана-па̄лана асура-кула-на̄ш́ана
+нанда-годхана ра̄кхойа̄ла̄
+говинда ма̄дхава наванӣта-таш̣кара
+сундара нанда-гопа̄ла̄
+
+4
+
+джа̄муна-тат̣а-чара гопӣ-басана-хара
+ра̄са-расика кр̣па̄мойа
+ш́рӣ-ра̄дха̄-валлабха вр̣нда̄вана-нат̣абара
+бхакативинода-а̄ш̣райа`
+        },
+        {
+            title: "Золотеє сонце",
+            content: `Золотеє сонце сходить,
+Сріблястий серпанок родить
+Золотую повну чашу
+Заливає
+Золотом
+
+Над горою темні хмари
+В'ються димом кучерявим,
+Затанцюють, розійдуться
+Засіяють
+Золотом
+
+Ой від гори і до двору
+Розлилося снігу море
+Гірським струмом рознеслося
+Залило все
+Золотом
+
+У селі і місті кожнім
+Розганяє сум тривожний
+Весна в серці променіє
+Шаленіє
+Золотом
+
+З далеких країв лунає
+Місяць повний підіймає
+Золоте обличчя сяє
+Надихає
+Золотом`
+        },
+        {
+            title: "Любов і лють",
+            content: `– приспів:
+Любов і лють в одному серці
+Так неочікувано разом,
+По твою душу йдуть імперці
+Та вже свобода понад страхом.
+
+Куплет 1:
+Завжди – після темної
+Ночі день,
+Після горя чекай ідей,
+що дорогу покажуть.
+Жди,
+коли ріки дадуть води,
+Унесуть тебе від біди
+– там, де море солоне.
+
+Куплет 2:
+Тримай – свого носа
+По вітру, май
+Свою совість, не закривай
+Її від променів світла.
+Дай собі розкіш
+Ходить у край,
+Де ми чесні та чисті
+Дбай про своє безкористя...
+
+Програш слова Стуса:
+"Терпи-терпи, терпець тебе шліфує
+Сталить твій дух, тому й терпи.
+Ніхто тебе з недолі не врятує,
+Ніхто не зіб'є з власної тропи!!!"`
+        },
+        {
+            title: "Минуле не вернуть",
+            content: `Минуле не вернуть,
+не виправить минуле,
+Вчорашнє — ніби сон,
+що випурхнув з очей.
+Як луки навесні
+ховаються під мулом,
+Так вкриється воно
+пластами днів, ночей.
+
+Але воно живе —
+забуте й незабуте,
+А час не зупиняється,
+а молодість біжить,
+І миті жодної
+не можна повернути,
+Щоб заново,
+по-іншому прожить.`
+        },
+        {
+            title: "Розпросторся, душе моя",
+            content: `Розпросторся, душе моя,
+На чотири татамі
+І не кулься од нагая
+І не крийся руками.
+
+Хай у тебе є дві межі,
+Та середина — справжня.
+Марне, вороже, ворожить —
+Молода чи поважна.
+
+Посередині — стовбур літ,
+А обабоки — крона.
+Посередині — вічний слід
+Від колиски до скону.
+
+Жаль – ні неба, ані землі
+В цій труні вертикальній,
+І заврунилися жалі,
+Думи всіли печальні.
+
+Як то сниться мені земля,
+На якій лиш ночую!
+Як мені небеса болять,
+Коли їх я не чую.
+
+Як постав ув очах мій край,
+Наче стовп осіянний.
+Каже: синку, ступай, ступай,
+Ти для мене коханий.
+
+Тож просторся, душе моя,
+На чотири татамі
+І не кулься од нагая
+І не крийся руками`
+        },
+        {
+            title: "Шри Нрисимха Пранам",
+            content: `намас те нарасим̇ха̄йа
+прахла̄да̄хла̄да-да̄йине
+хиран̣йакаш́ипор вакш̣ах̣-
+ш́ила̄-т̣ан̇ка-накха̄лайе
+ито нр̣сим̇хах̣ парато нр̣сим̇хо
+йато йато йа̄ми тато нр̣сим̇хах̣
+бахир нр̣сим̇хо хр̣дайе нр̣сим̇хо
+нр̣сим̇хам а̄дим̇ ш́аран̣ам̇ прападйе
+
+4
+
+тава кара-камала-варе накхам адбхута-ш́р̣н̇гам̇
+далита-хиран̣йакаш́ипу-тану-бхр̣н̇гам
+кеш́ава дхр̣та-нарахари-рӯпа джайа джагадӣш́а харе`
+        }
+    ];
+
+    function getSongs() {
+        const stored = localStorage.getItem('gurtom_songs');
+        if (stored) {
+            try { return JSON.parse(stored); } catch(e) {}
+        }
+        return initialSongs;
+    }
+
+    function saveSongs(songs) {
+        localStorage.setItem('gurtom_songs', JSON.stringify(songs));
+    }
+
+    function renderSongs() {
+        const songs = getSongs();
+        songs.sort((a, b) => a.title.localeCompare(b.title, 'uk', { sensitivity: 'base' }));
+
+        const container = document.getElementById('songsList');
+        container.innerHTML = '';
+
+        songs.forEach((song, index) => {
+            const item = document.createElement('div');
+            item.className = 'song-item';
+            
+            const btn = document.createElement('button');
+            btn.className = 'song-title';
+            btn.onclick = function() { toggleSong(this); };
+            
+            const titleSpan = document.createElement('span');
+            titleSpan.textContent = song.title;
+            
+            const arrowSpan = document.createElement('span');
+            arrowSpan.className = 'arrow';
+            arrowSpan.textContent = '▼';
+            
+            btn.appendChild(titleSpan);
+            btn.appendChild(arrowSpan);
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'song-content';
+            
+            const pre = document.createElement('pre');
+            pre.textContent = song.content;
+            
+            const footer = document.createElement('div');
+            footer.className = 'song-footer';
+            
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn btn-danger';
+            delBtn.textContent = 'Видалити пісню';
+            delBtn.onclick = function() { deleteSong(song.title); };
+            
+            footer.appendChild(delBtn);
+            contentDiv.appendChild(pre);
+            contentDiv.appendChild(footer);
+            
+            item.appendChild(btn);
+            item.appendChild(contentDiv);
+            
+            container.appendChild(item);
+        });
+    }
+
+    function toggleSong(button) {
+        const item = button.parentElement;
+        item.classList.toggle('active');
+    }
+
+    function openModal() {
+        document.getElementById('addModal').classList.add('open');
+    }
+
+    function closeModal() {
+        document.getElementById('addModal').classList.remove('open');
+        document.getElementById('songTitleInput').value = '';
+        document.getElementById('songTextInput').value = '';
+    }
+
+    function addNewSong() {
+        const title = document.getElementById('songTitleInput').value.trim();
+        const content = document.getElementById('songTextInput').value.trim();
+
+        if (!title || !content) {
+            alert('Будь ласка, заповніть назву та текст пісні.');
+            return;
+        }
+
+        const password = prompt('Введіть пароль для додавання пісні:');
+        if (password !== ADD_PASSWORD) {
+            alert('Невірний пароль! Додавання скасовано.');
+            return;
+        }
+
+        const songs = getSongs();
+        songs.push({ title, content });
+        saveSongs(songs);
+
+        renderSongs();
+        closeModal();
+        alert('Пісню успішно додано!');
+    }
+
+    function deleteSong(title) {
+        const password = prompt(`Щоб видалити пісню "${title}", введіть пароль:`);
+        if (password === DELETE_PASSWORD) {
+            let songs = getSongs();
+            songs = songs.filter(s => s.title !== title);
+            saveSongs(songs);
+            renderSongs();
+            alert('Пісню видалено!');
+        } else if (password !== null) {
+            alert('Невірний пароль! Видалення скасовано.');
+        }
+    }
+
+    // Initial render
+    renderSongs();
+</script>
+
+</body>
+</html>
