@@ -16,6 +16,20 @@
             --danger-hover: #c53030;
             --border-color: #e2e8f0;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --modal-bg: #ffffff;
+            --song-content-bg: #fafbfc;
+            --muted-text: #4a5568;
+        }
+
+        body.dark-mode {
+            --bg-color: #121826;
+            --card-bg: #1e293b;
+            --text-color: #f1f5f9;
+            --border-color: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --modal-bg: #1e293b;
+            --song-content-bg: #0f172a;
+            --muted-text: #cbd5e1;
         }
 
         body {
@@ -26,16 +40,40 @@
             padding: 20px;
             display: flex;
             justify-content: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Toggle Theme Button */
+        .theme-toggle-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            cursor: pointer;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 8px 14px;
+            font-size: 1.1rem;
+            user-select: none;
+            box-shadow: var(--shadow);
+            color: var(--text-color);
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle-btn:hover {
+            transform: scale(1.05);
         }
 
         .container {
             width: 100%;
             max-width: 650px;
+            margin-top: 20px;
         }
 
         h1 {
             text-align: center;
-            color: #1a202c;
+            color: var(--text-color);
             margin-bottom: 20px;
             font-size: 2rem;
             letter-spacing: -0.025em;
@@ -69,6 +107,22 @@
             transform: scale(0.98);
         }
 
+        .btn-edit {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-edit:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
         .btn-danger {
             background-color: transparent;
             color: var(--danger-color);
@@ -76,7 +130,8 @@
             padding: 6px 12px;
             font-size: 0.85rem;
             border-radius: 6px;
-            margin-top: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
         .btn-danger:hover {
@@ -92,7 +147,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.6);
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -105,12 +160,14 @@
         }
 
         .modal-content {
-            background-color: white;
+            background-color: var(--modal-bg);
+            color: var(--text-color);
             border-radius: 12px;
             padding: 24px;
             width: 100%;
             max-width: 500px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
         }
 
         .modal-header {
@@ -128,7 +185,7 @@
             font-size: 0.9rem;
             font-weight: 600;
             margin-bottom: 6px;
-            color: #4a5568;
+            color: var(--muted-text);
         }
 
         .form-group input, .form-group textarea {
@@ -139,6 +196,8 @@
             font-family: inherit;
             font-size: 0.95rem;
             box-sizing: border-box;
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
 
         .form-group textarea {
@@ -190,7 +249,7 @@
         }
 
         .song-title:hover {
-            background-color: #f8fafc;
+            background-color: rgba(0, 0, 0, 0.03);
             color: var(--accent-color);
         }
 
@@ -209,7 +268,7 @@
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out, padding 0.3s ease;
-            background-color: #fafbfc;
+            background-color: var(--song-content-bg);
             border-top: 0px solid var(--border-color);
             padding: 0 20px;
         }
@@ -217,7 +276,7 @@
         .song-item.active .song-content {
             padding: 16px 20px 20px 20px;
             border-top-width: 1px;
-            max-height: 1500px;
+            max-height: 2500px;
         }
 
         pre {
@@ -227,21 +286,23 @@
             font-size: 1rem;
             line-height: 1.6;
             margin: 0;
-            color: #4a5568;
+            color: var(--muted-text);
         }
 
         .song-footer {
             display: flex;
             justify-content: flex-end;
-            margin-top: 10px;
+            gap: 10px;
+            margin-top: 16px;
         }
     </style>
 </head>
 <body>
-<!-- Кнопка перемикання теми у лівому верхньому кутку -->
-<div id="theme-toggle" onclick="toggleTheme()" style="position: fixed; top: 15px; left: 15px; z-index: 1000; cursor: pointer; background: rgba(128,128,128,0.2); border-radius: 50px; padding: 8px 12px; font-size: 1.2rem; user-select: none;">
-    <span id="theme-icon">☀️ / 🌙</span>
+
+<div class="theme-toggle-btn" onclick="toggleTheme()" id="themeToggleBtn">
+    ☀️
 </div>
+
 <div class="container">
     <h1>ГуртОм Репертуар</h1>
 
@@ -252,7 +313,7 @@
     <div id="songsList"></div>
 </div>
 
-<!-- Modal Dialog -->
+<!-- Modal Dialog for Adding Song -->
 <div class="modal" id="addModal">
     <div class="modal-content">
         <div class="modal-header">Додати нову пісню</div>
@@ -271,9 +332,29 @@
     </div>
 </div>
 
+<!-- Modal Dialog for Editing Song -->
+<div class="modal" id="editModal">
+    <div class="modal-content">
+        <div class="modal-header">Редагувати пісню</div>
+        <input type="hidden" id="editOriginalTitle">
+        <div class="form-group">
+            <label for="editSongTitleInput">Назва пісні</label>
+            <input type="text" id="editSongTitleInput">
+        </div>
+        <div class="form-group">
+            <label for="editSongTextInput">Текст пісні</label>
+            <textarea id="editSongTextInput" style="height: 200px;"></textarea>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn btn-secondary" onclick="closeEditModal()">Скасувати</button>
+            <button class="btn" onclick="saveEditedSong()">Зберегти зміни</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const ADD_PASSWORD = "Nitai";
-    const DELETE_PASSWORD = "ArjunaK";
+    const EDIT_DELETE_PASSWORD = "ArjunaK";
 
     const initialSongs = [
         {
@@ -459,7 +540,7 @@
 Свою совість, не закривай
 Її від променів світла.
 Дай собі розкіш
-Ходить у край,
+Ходит у край,
 Де ми чесні та чисті
 Дбай про своє безкористя...
 
@@ -545,6 +626,23 @@
         }
     ];
 
+    // Theme Switch Logic
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        document.getElementById('themeToggleBtn').textContent = isDark ? '🌙' : '☀️';
+        localStorage.setItem('gurtom_theme', isDark ? 'dark' : 'light');
+    }
+
+    function initTheme() {
+        const savedTheme = localStorage.getItem('gurtom_theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('themeToggleBtn').textContent = '🌙';
+        }
+    }
+
+    // Storage Functions
     function getSongs() {
         const stored = localStorage.getItem('gurtom_songs');
         if (stored) {
@@ -557,6 +655,7 @@
         localStorage.setItem('gurtom_songs', JSON.stringify(songs));
     }
 
+    // Render Function
     function renderSongs() {
         const songs = getSongs();
         songs.sort((a, b) => a.title.localeCompare(b.title, 'uk', { sensitivity: 'base' }));
@@ -564,7 +663,7 @@
         const container = document.getElementById('songsList');
         container.innerHTML = '';
 
-        songs.forEach((song, index) => {
+        songs.forEach((song) => {
             const item = document.createElement('div');
             item.className = 'song-item';
             
@@ -591,11 +690,17 @@
             const footer = document.createElement('div');
             footer.className = 'song-footer';
             
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn-edit';
+            editBtn.textContent = '✏️ Редагувати';
+            editBtn.onclick = function() { openEditModal(song.title, song.content); };
+
             const delBtn = document.createElement('button');
-            delBtn.className = 'btn btn-danger';
-            delBtn.textContent = 'Видалити пісню';
+            delBtn.className = 'btn-danger';
+            delBtn.textContent = 'Видалити';
             delBtn.onclick = function() { deleteSong(song.title); };
             
+            footer.appendChild(editBtn);
             footer.appendChild(delBtn);
             contentDiv.appendChild(pre);
             contentDiv.appendChild(footer);
@@ -612,6 +717,7 @@
         item.classList.toggle('active');
     }
 
+    // Modal Add Song
     function openModal() {
         document.getElementById('addModal').classList.add('open');
     }
@@ -646,9 +752,50 @@
         alert('Пісню успішно додано!');
     }
 
+    // Modal Edit Song
+    function openEditModal(title, content) {
+        const password = prompt(`Введіть пароль для редагування пісні "${title}":`);
+        if (password !== EDIT_DELETE_PASSWORD) {
+            if (password !== null) alert('Невірний пароль!');
+            return;
+        }
+
+        document.getElementById('editOriginalTitle').value = title;
+        document.getElementById('editSongTitleInput').value = title;
+        document.getElementById('editSongTextInput').value = content;
+        document.getElementById('editModal').classList.add('open');
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').classList.remove('open');
+    }
+
+    function saveEditedSong() {
+        const originalTitle = document.getElementById('editOriginalTitle').value;
+        const newTitle = document.getElementById('editSongTitleInput').value.trim();
+        const newContent = document.getElementById('editSongTextInput').value.trim();
+
+        if (!newTitle || !newContent) {
+            alert('Назва та текст не можуть бути порожніми!');
+            return;
+        }
+
+        let songs = getSongs();
+        const songIndex = songs.findIndex(s => s.title === originalTitle);
+
+        if (songIndex !== -1) {
+            songs[songIndex] = { title: newTitle, content: newContent };
+            saveSongs(songs);
+            renderSongs();
+            closeEditModal();
+            alert('Зміни успішно збережено!');
+        }
+    }
+
+    // Delete Song
     function deleteSong(title) {
         const password = prompt(`Щоб видалити пісню "${title}", введіть пароль:`);
-        if (password === DELETE_PASSWORD) {
+        if (password === EDIT_DELETE_PASSWORD) {
             let songs = getSongs();
             songs = songs.filter(s => s.title !== title);
             saveSongs(songs);
@@ -659,7 +806,8 @@
         }
     }
 
-    // Initial render
+    // Init Page
+    initTheme();
     renderSongs();
 </script>
 
